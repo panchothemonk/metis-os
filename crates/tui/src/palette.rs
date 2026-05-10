@@ -6,23 +6,32 @@ use ratatui::style::Color;
 // ── MetisOS Brand Colors ──────────────────────────────────────────
 pub const METIS_PURPLE_RGB: (u8, u8, u8) = (192, 77, 255);    // #C04DFF — consciousness purple
 pub const METIS_CYAN_RGB: (u8, u8, u8) = (0, 229, 255);       // #00E5FF — reasoning cyan
+#[allow(dead_code)]
 pub const METIS_MINT_RGB: (u8, u8, u8) = (0, 255, 136);       // #00FF88 — user mint
 pub const METIS_VOID_RGB: (u8, u8, u8) = (8, 5, 16);          // #080510 — background void
 pub const METIS_ABYSS_RGB: (u8, u8, u8) = (13, 10, 26);       // #0D0A1A — panel surface
 pub const METIS_DEEP_RGB: (u8, u8, u8) = (21, 16, 37);        // #151025 — elevated
 pub const METIS_BORDER_RGB: (u8, u8, u8) = (42, 26, 74);      // #2A1A4A — border
+#[allow(dead_code)]
 pub const METIS_REASONING_RGB: (u8, u8, u8) = (17, 8, 34);    // #110822 — reasoning bg
 pub const METIS_RED_RGB: (u8, u8, u8) = (255, 68, 102);       // #FF4466 — error
+#[allow(dead_code)]
 pub const METIS_AMBER_RGB: (u8, u8, u8) = (255, 170, 40);     // #FFAA28 — warning
+#[allow(dead_code)]
 pub const METIS_SUCCESS_RGB: (u8, u8, u8) = (0, 212, 140);    // #00D48C — success
+#[allow(dead_code)]
 pub const METIS_TOOL_RGB: (u8, u8, u8) = (16, 20, 40);        // #101428 — tool bg
 
 // Legacy aliases for compatibility with existing code
 pub const DEEPSEEK_BLUE_RGB: (u8, u8, u8) = METIS_PURPLE_RGB;
 pub const DEEPSEEK_SKY_RGB: (u8, u8, u8) = METIS_CYAN_RGB;
+#[allow(dead_code)]
 pub const DEEPSEEK_AQUA_RGB: (u8, u8, u8) = METIS_CYAN_RGB;
+#[allow(dead_code)]
 pub const DEEPSEEK_NAVY_RGB: (u8, u8, u8) = METIS_ABYSS_RGB;
+#[allow(dead_code)]
 pub const DEEPSEEK_INK_RGB: (u8, u8, u8) = METIS_VOID_RGB;
+#[allow(dead_code)]
 pub const DEEPSEEK_SLATE_RGB: (u8, u8, u8) = METIS_ABYSS_RGB;
 pub const DEEPSEEK_RED_RGB: (u8, u8, u8) = METIS_RED_RGB;
 
@@ -39,12 +48,15 @@ pub const LIGHT_TEXT_SOFT_RGB: (u8, u8, u8) = (30, 41, 59);
 pub const LIGHT_BORDER_RGB: (u8, u8, u8) = (71, 85, 105);
 pub const LIGHT_SELECTION_RGB: (u8, u8, u8) = (219, 234, 254);
 
+#[allow(dead_code)]
 pub const BORDER_COLOR_RGB: (u8, u8, u8) = METIS_BORDER_RGB;
 
 // ── Color constants (keep existing names for compat) ────────────
 pub const DEEPSEEK_BLUE: Color = Color::Rgb(METIS_PURPLE_RGB.0, METIS_PURPLE_RGB.1, METIS_PURPLE_RGB.2);
 pub const DEEPSEEK_SKY: Color = Color::Rgb(METIS_CYAN_RGB.0, METIS_CYAN_RGB.1, METIS_CYAN_RGB.2);
+#[allow(dead_code)]
 pub const DEEPSEEK_AQUA: Color = Color::Rgb(METIS_CYAN_RGB.0, METIS_CYAN_RGB.1, METIS_CYAN_RGB.2);
+#[allow(dead_code)]
 pub const DEEPSEEK_NAVY: Color = Color::Rgb(METIS_ABYSS_RGB.0, METIS_ABYSS_RGB.1, METIS_ABYSS_RGB.2);
 pub const DEEPSEEK_INK: Color = Color::Rgb(METIS_VOID_RGB.0, METIS_VOID_RGB.1, METIS_VOID_RGB.2);
 pub const DEEPSEEK_SLATE: Color = Color::Rgb(METIS_ABYSS_RGB.0, METIS_ABYSS_RGB.1, METIS_ABYSS_RGB.2);
@@ -80,9 +92,12 @@ pub const LIGHT_USER_BODY: Color = Color::Rgb(0, 180, 96);
 
 // ── UI theming ───────────────────────────────────────────────────
 pub const BORDER_COLOR: Color = Color::Rgb(METIS_BORDER_RGB.0, METIS_BORDER_RGB.1, METIS_BORDER_RGB.2);
+#[allow(dead_code)]
 pub const ACCENT_PRIMARY: Color = DEEPSEEK_BLUE;               // purple
+#[allow(dead_code)]
 pub const ACCENT_SECONDARY: Color = TEXT_ACCENT;                // cyan
 pub const BACKGROUND_DARK: Color = Color::Rgb(6, 4, 14);      // #06040E — even darker
+#[allow(dead_code)]
 pub const STATUS_NEUTRAL: Color = Color::Rgb(140, 130, 170);
 pub const SURFACE_PANEL: Color = Color::Rgb(METIS_ABYSS_RGB.0, METIS_ABYSS_RGB.1, METIS_ABYSS_RGB.2);
 pub const SURFACE_ELEVATED: Color = Color::Rgb(METIS_DEEP_RGB.0, METIS_DEEP_RGB.1, METIS_DEEP_RGB.2);
@@ -277,7 +292,9 @@ impl ColorDepth {
 #[must_use] pub fn adapt_bg(color: Color, depth: ColorDepth) -> Color {
     match (color, depth) { (_, ColorDepth::TrueColor) => color, (Color::Rgb(r, g, b), ColorDepth::Ansi256) => Color::Indexed(rgb_to_ansi256(r, g, b)), (_, ColorDepth::Ansi256) => color, (_, ColorDepth::Ansi16) => Color::Reset }
 }
-#[must_use] pub fn blend(fg: Color, bg: Color, alpha: f32) -> Color {
+#[must_use]
+#[allow(dead_code)]
+pub fn blend(fg: Color, bg: Color, alpha: f32) -> Color {
     let alpha = alpha.clamp(0.0, 1.0);
     match (fg, bg) { (Color::Rgb(fr, fg_, fb), Color::Rgb(br, bg_, bb)) => { let mix = |a: u8, b: u8| -> u8 { let a = f32::from(a); let b = f32::from(b); (b + (a - b) * alpha).round().clamp(0.0, 255.0) as u8 }; Color::Rgb(mix(fr, br), mix(fg_, bg_), mix(fb, bb)) } _ => fg }
 }
