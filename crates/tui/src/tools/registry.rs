@@ -680,6 +680,14 @@ impl ToolRegistryBuilder {
         self.with_tool(Arc::new(MemoryUserEditsTool))
     }
 
+    /// Add the `dream` tool. Lets the model trigger the dreaming
+    /// extraction pipeline or check memory state.
+    #[must_use]
+    pub fn with_dream_tool(self) -> Self {
+        use super::dream::DreamTool;
+        self.with_tool(Arc::new(DreamTool))
+    }
+
     /// Include MCP tools from a connected pool as first-class registry
     /// citizens. Each MCP tool is wrapped in a lightweight adapter that
     /// implements `ToolSpec`, so the unified `ToolRegistryBuilder` flow

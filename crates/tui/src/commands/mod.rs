@@ -227,6 +227,12 @@ pub const COMMANDS: &[CommandInfo] = &[
         description_id: MessageId::CmdMemoryDescription,
     },
     CommandInfo {
+        name: "dream",
+        aliases: &["dreaming"],
+        usage: "/dream [status|help]",
+        description_id: MessageId::CmdDreamDescription,
+    },
+    CommandInfo {
         name: "attach",
         aliases: &["image", "media"],
         usage: "/attach <path>",
