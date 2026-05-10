@@ -3740,6 +3740,13 @@ impl App {
         self.model.clone()
     }
 
+    /// The brand name shown in the footer status line.
+    /// Returns \"MetisOS\" to give MetisOS its own identity in the TUI.
+    #[must_use]
+    pub fn brand_label(&self) -> String {
+        "MetisOS".to_string()
+    }
+
     pub fn reasoning_effort_display_label(&self) -> String {
         if self.auto_model || self.reasoning_effort == ReasoningEffort::Auto {
             if let Some(effective) = self.last_effective_reasoning_effort {

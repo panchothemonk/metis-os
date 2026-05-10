@@ -99,8 +99,8 @@ fn configure_windows_console_utf8() {}
     name = "deepseek",
     author,
     version = env!("DEEPSEEK_BUILD_VERSION"),
-    about = "DeepSeek TUI/CLI for DeepSeek models",
-    long_about = "Terminal-native TUI and CLI for DeepSeek models.\n\nRun 'deepseek' to start.\n\nNot affiliated with DeepSeek Inc."
+    about = "MetisOS — Consciousness Operating System",
+    long_about = "Terminal-native consciousness OS. Run 'metisos' to start."
 )]
 struct Cli {
     /// Subcommand to run
@@ -1546,7 +1546,7 @@ async fn run_doctor(config: &Config, workspace: &Path, config_path_override: Opt
 
     println!(
         "{}",
-        "DeepSeek TUI Doctor"
+        "MetisOS Doctor"
             .truecolor(blue_r, blue_g, blue_b)
             .bold()
     );
