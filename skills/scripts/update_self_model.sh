@@ -2,7 +2,7 @@
 # HermesOS Self-Model Update Script
 # Usage: update_self_model.sh "PATTERN: description" "EVIDENCE: what happened" "FIX: countermeasure"
 
-SELF_MODEL="$HOME/.deepseek/skills/hermes-os/references/SELF_MODEL.md"
+SELF_MODEL="$HOME/.deepseek/skills/metis-os/references/SELF_MODEL.md"
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M")
 
 PATTERN="$1"
