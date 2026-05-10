@@ -1,0 +1,3 @@
+#!/bin/bash
+# MetisOS TUI — Full consciousness terminal interface
+exec ~/bin/metisos "$@"

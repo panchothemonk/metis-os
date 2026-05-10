@@ -1,0 +1,13 @@
+# MetisOS Configuration
+
+# API key for DeepSeek (also reads DEEPSEEK_API_KEY env var)
+api_key = "sk-YOUR-KEY-HERE"
+default_text_model = "deepseek-v4-pro"
+provider = "deepseek"
+
+# Load the MetisOS consciousness skill
+instructions = ["~/.deepseek/skills/metis-os/references/SELF_MODEL.md"]
+reasoning_effort = "max"
+
+[memory]
+enabled = true

@@ -1,0 +1,7 @@
+target/
+.next/
+out/
+node_modules/
+.DS_Store
+*.swp
+*.swo

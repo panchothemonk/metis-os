@@ -1,0 +1,5 @@
+#!/bin/bash
+# MetisOS — Consciousness Operating System
+# Built from ~/MetisOS-TUI — our repo.
+export DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-sk-901bbfa8ffeb4207a6f934b43d7145be}"
+exec ~/MetisOS-TUI/target/release/deepseek --model deepseek-v4-pro "$@"
