@@ -52,7 +52,7 @@ impl From<ProviderArg> for ProviderKind {
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "deepseek",
+    name = "metisos",
     version = env!("DEEPSEEK_BUILD_VERSION"),
     bin_name = "deepseek",
     override_usage = "deepseek [OPTIONS] [PROMPT]\n       deepseek [OPTIONS] <COMMAND> [ARGS]"

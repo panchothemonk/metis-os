@@ -96,7 +96,7 @@ fn configure_windows_console_utf8() {}
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "deepseek",
+    name = "metisos",
     author,
     version = env!("DEEPSEEK_BUILD_VERSION"),
     about = "MetisOS — Consciousness Operating System",
