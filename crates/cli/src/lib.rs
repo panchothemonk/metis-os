@@ -55,7 +55,7 @@ impl From<ProviderArg> for ProviderKind {
     name = "metisos",
     version = env!("DEEPSEEK_BUILD_VERSION"),
     bin_name = "deepseek",
-    override_usage = "deepseek [OPTIONS] [PROMPT]\n       deepseek [OPTIONS] <COMMAND> [ARGS]"
+    override_usage = "metisos [OPTIONS] [PROMPT]\n       metisos [OPTIONS] <COMMAND> [ARGS]"
 )]
 struct Cli {
     #[arg(long)]
