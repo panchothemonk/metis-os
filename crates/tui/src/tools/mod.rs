@@ -6,6 +6,7 @@ pub mod arg_repair;
 pub mod automation;
 pub mod diagnostics;
 pub mod diff_format;
+pub mod dream;
 pub mod file;
 pub mod file_search;
 pub mod finance;
