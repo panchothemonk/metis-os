@@ -843,6 +843,11 @@ pub struct Config {
     #[serde(default)]
     pub runtime_api: Option<RuntimeApiConfig>,
 
+    /// Obsidian vault path for memory persistence. When set, MetisOS writes
+    /// memory as interlinked Markdown in an Obsidian-compatible vault.
+    #[serde(default)]
+    pub vault_path: Option<String>,
+
     /// Workshop / large-tool-output routing (#548). When absent, the global
     /// default threshold of 4 096 tokens applies and routing is active.
     #[serde(default)]
@@ -2430,6 +2435,7 @@ fn merge_config(base: Config, override_cfg: Config) -> Config {
         providers: merge_providers(base.providers, override_cfg.providers),
         features: merge_features(base.features, override_cfg.features),
         notifications: override_cfg.notifications.or(base.notifications),
+        vault_path: override_cfg.vault_path.or(base.vault_path),
         network: override_cfg.network.or(base.network),
         skills: override_cfg.skills.or(base.skills),
         snapshots: override_cfg.snapshots.or(base.snapshots),

@@ -18,6 +18,7 @@ pub mod git_history;
 pub mod github;
 pub mod large_output_router;
 pub mod memory_user_edits;
+pub mod obsidian_vault;
 pub mod parallel;
 pub mod plan;
 pub mod project;

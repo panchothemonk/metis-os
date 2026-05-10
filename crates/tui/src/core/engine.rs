@@ -557,6 +557,14 @@ impl Engine {
         };
         engine.rehydrate_latest_canonical_state();
 
+        // Bootstrap the Obsidian vault if configured
+        if let Some(ref vault_path) = api_config.vault_path {
+            let root = std::path::PathBuf::from(vault_path);
+            if let Err(e) = crate::tools::obsidian_vault::bootstrap_vault(&root) {
+                tracing::warn!("Failed to bootstrap Obsidian vault: {e}");
+            }
+        }
+
         let handle = EngineHandle {
             tx_op,
             rx_event: Arc::new(RwLock::new(rx_event)),

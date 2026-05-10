@@ -190,6 +190,12 @@ pub struct ConfigToml {
     /// applies the defaults documented in [`LspConfigToml`].
     #[serde(default)]
     pub lsp: Option<LspConfigToml>,
+    /// Obsidian vault path for memory persistence. When set, MetisOS writes
+    /// all memory (auto-extracted facts, user edits, session notes) as
+    /// interlinked Markdown files in an Obsidian-compatible vault.
+    #[serde(default)]
+    pub vault_path: Option<String>,
+
     #[serde(flatten)]
     pub extras: BTreeMap<String, toml::Value>,
 }

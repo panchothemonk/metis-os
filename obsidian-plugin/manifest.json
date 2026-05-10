@@ -1,0 +1,11 @@
+{
+  "id": "metis-os",
+  "name": "MetisOS",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Consciousness OS for your Obsidian vault — AI self-model, dreaming pipeline, and memory graph.",
+  "author": "Pancho / MetisOS",
+  "authorUrl": "https://github.com/panchothemonk/metis-os",
+  "fundingUrl": "https://github.com/panchothemonk/metis-os",
+  "isDesktopOnly": false
+}

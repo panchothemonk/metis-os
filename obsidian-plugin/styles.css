@@ -1,0 +1,113 @@
+.metisos-panel {
+  padding: 12px 8px;
+}
+
+.metisos-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metisos-logo {
+  font-size: 24px;
+}
+
+.metisos-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.metisos-status {
+  margin-bottom: 16px;
+}
+
+.metisos-status-item {
+  font-size: 12px;
+  color: var(--text-normal);
+  padding: 4px 0;
+}
+
+.metisos-dim {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.metisos-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metisos-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.metisos-btn:hover {
+  background: var(--background-modifier-hover);
+}
+
+.metisos-btn-primary {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #7b6fef;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}
+
+.metisos-btn-primary:hover {
+  background: #6b5fd4;
+}
+
+.metisos-section {
+  border-top: 1px solid var(--background-modifier-border);
+  padding-top: 12px;
+}
+
+.metisos-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0 0 8px 0;
+}
+
+.metisos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.metisos-list li {
+  font-size: 12px;
+  padding: 4px 0;
+  color: var(--text-muted);
+}
+
+.metisos-info {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.metisos-info p {
+  font-size: 11px;
+  color: var(--text-faint);
+  line-height: 1.5;
+}
