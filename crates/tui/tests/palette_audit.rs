@@ -10,7 +10,6 @@ use std::path::Path;
 use ratatui::style::Color;
 
 #[path = "../src/palette.rs"]
-#[allow(dead_code)]
 mod palette;
 
 const DEPRECATED_DIRECT_COLORS: &[&str] = &["DEEPSEEK_AQUA"];
