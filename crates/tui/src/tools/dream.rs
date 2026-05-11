@@ -111,11 +111,11 @@ fn dream_status() -> Result<ToolResult, ToolError> {
     }
 
     // Check sessions available
-    if sessions_dir().exists() {
-        if let Ok(entries) = std::fs::read_dir(sessions_dir()) {
-            let count = entries.filter_map(|e| e.ok()).count();
-            lines.push(format!("Sessions available: {}", count));
-        }
+    if sessions_dir().exists()
+        && let Ok(entries) = std::fs::read_dir(sessions_dir())
+    {
+        let count = entries.filter_map(|e| e.ok()).count();
+        lines.push(format!("Sessions available: {}", count));
     }
 
     Ok(ToolResult::success(lines.join("\n")))

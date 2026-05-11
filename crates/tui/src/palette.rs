@@ -316,11 +316,11 @@ pub fn blend(fg: Color, bg: Color, alpha: f32) -> Color {
 #[must_use] pub fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
     let (r, g, b) = (u32::from(r), u32::from(g), u32::from(b));
     if r == g && g == b {
-        if r < 8 { return 16; } if r > 248 { return 231; }
+        if r < 8 { return 16; } else if r > 248 { return 231; }
         return ((r - 8) / 10 + 232) as u8;
     }
     let r6 = (r * 5 / 255) as u8; let g6 = (g * 5 / 255) as u8; let b6 = (b * 5 / 255) as u8;
-    16 + 36 * u8::from(r6) + 6 * u8::from(g6) + u8::from(b6)
+    16 + 36 * r6 + 6 * g6 + b6
 }
 #[must_use] pub fn nearest_ansi16(r: u8, g: u8, b: u8) -> Color {
     let luminance = 0.299 * f32::from(r) + 0.587 * f32::from(g) + 0.114 * f32::from(b);

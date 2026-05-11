@@ -94,8 +94,12 @@ impl Engine {
 
         // memory_user_edits is always available — the tool handles its own
         // state independently of the memory.md opt-in toggle.
-        builder = builder.with_memory_user_edits_tool();
-        builder = builder.with_dream_tool();
+        // Plan mode is strictly read-only: these tools declare WritesFiles
+        // capability and must not be exposed.
+        if mode != AppMode::Plan {
+            builder = builder.with_memory_user_edits_tool();
+            builder = builder.with_dream_tool();
+        }
 
         builder
     }

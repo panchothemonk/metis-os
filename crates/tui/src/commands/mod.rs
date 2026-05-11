@@ -530,7 +530,7 @@ pub fn execute(cmd: &str, app: &mut App) -> CommandResult {
         "home" | "stats" | "overview" => core::home_dashboard(app),
         "note" => note::note(app, arg),
         "memory" => memory::memory(app, arg),
-        "dream" => dream::dream(app, arg),
+        "dream" | "dreaming" => dream::dream(app, arg),
         "attach" | "image" | "media" => attachment::attach(app, arg),
         "task" | "tasks" => task::task(app, arg),
         "jobs" | "job" => jobs::jobs(app, arg),

@@ -1,5 +1,5 @@
 #!/bin/bash
-# HermesOS Self-Model Update Script
+# MetisOS Self-Model Update Script
 # Usage: update_self_model.sh "PATTERN: description" "EVIDENCE: what happened" "FIX: countermeasure"
 
 SELF_MODEL="$HOME/.deepseek/skills/metis-os/references/SELF_MODEL.md"

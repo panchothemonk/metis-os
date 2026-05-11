@@ -697,7 +697,7 @@ mod tests {
         assert_eq!(props.text_dim_color, palette::TEXT_DIM);
         assert_eq!(props.text_hint_color, palette::TEXT_HINT);
         assert_eq!(props.text_muted_color, palette::TEXT_MUTED);
-        assert_eq!(props.model, "deepseek-v4-flash");
+        assert_eq!(props.model, "MetisOS");
         assert!(props.coherence.is_empty());
         assert!(props.agents.is_empty());
         assert!(props.cache.is_empty());
@@ -997,7 +997,7 @@ mod tests {
 
         let rendered: String = (0..area.width).map(|x| buf[(x, 0)].symbol()).collect();
         assert!(rendered.contains("agent"));
-        assert!(rendered.contains("deepseek-v4-flash"));
+        assert!(rendered.contains("MetisOS"));
         assert!(!rendered.contains("ready"));
     }
 
@@ -1137,7 +1137,7 @@ mod tests {
         let line = render_at_width(props, 120);
         assert!(line.contains("agent"), "mode visible: {line:?}");
         assert!(
-            line.contains("deepseek-v4-flash"),
+            line.contains("MetisOS"),
             "model visible: {line:?}"
         );
         assert!(line.contains("working"), "status visible: {line:?}");
@@ -1149,7 +1149,7 @@ mod tests {
         let props = props_with_status("working");
         let line = render_at_width(props, 100);
         assert!(line.contains("agent"));
-        assert!(line.contains("deepseek-v4-flash"));
+        assert!(line.contains("MetisOS"));
         assert!(line.contains("working"));
     }
 
@@ -1160,48 +1160,49 @@ mod tests {
         let props = props_with_status("working");
         let line = render_at_width(props, 80);
         assert!(line.contains("agent"));
-        assert!(line.contains("deepseek-v4-flash"));
+        assert!(line.contains("MetisOS"));
         assert!(!line.contains("..."), "no mid-word truncation: {line:?}");
         assert!(line.len() <= 80, "fits in 80 cols: {line:?}");
     }
 
-    /// Status drops before the model is truncated. With a longer status label
-    /// at 40 cols the status segment is dropped to keep mode + model intact.
+    /// With a longer status label at 30 cols the status segment is dropped to
+    /// keep mode + model intact ("MetisOS" is 7 chars vs old 17-char model id).
     #[test]
     fn footer_priority_drop_status_first_at_40_cols() {
         let props = props_with_status("refreshing context");
-        // "agent · deepseek-v4-flash · refreshing context" = 46 cols. At 40
+        // "agent · MetisOS · refreshing context" ≈ 37 cols. At 30
         // the status label drops, keeping mode + model verbatim.
-        let line = render_at_width(props, 40);
+        let line = render_at_width(props, 30);
         assert!(line.contains("agent"), "mode kept: {line:?}");
         assert!(
-            line.contains("deepseek-v4-flash"),
+            line.contains("MetisOS"),
             "model kept verbatim: {line:?}"
         );
         assert!(
             !line.contains("refreshing"),
             "status dropped before model truncated: {line:?}",
         );
-        assert!(line.len() <= 40, "fits in 40 cols: {line:?}");
+        assert!(line.len() <= 30, "fits in 30 cols: {line:?}");
     }
 
-    /// At 60 cols mode + model + a long status all just fit (49 cols), so the
-    /// whole line is preserved.
+    /// At 60 cols mode + model + a long status all just fit (49 → ~35 cols with
+    /// "MetisOS"), so the whole line is preserved.
     #[test]
     fn footer_priority_drop_full_at_60_cols() {
         let props = props_with_status("working");
         let line = render_at_width(props, 60);
         assert!(line.contains("agent"));
-        assert!(line.contains("deepseek-v4-flash"));
+        assert!(line.contains("MetisOS"));
         assert!(line.contains("working"));
     }
 
-    /// Below 30 cols the model truncates with an ellipsis only after the
-    /// status label has already been dropped. Mode label always survives.
+    /// Below 12 cols the model ("MetisOS", 7 chars) truncates with an ellipsis
+    /// only after the status label has already been dropped. Mode label always
+    /// survives.
     #[test]
     fn footer_priority_drop_truncates_model_only_when_status_already_gone() {
         let props = props_with_status("working");
-        let line = render_at_width(props, 20);
+        let line = render_at_width(props, 12);
         assert!(line.starts_with("agent"), "mode stays at front: {line:?}");
         assert!(
             line.contains("..."),
@@ -1232,7 +1233,7 @@ mod tests {
         let props = props_with_status_and_cost("working", "$0.42");
         let line = render_at_width(props, 120);
         let mode_pos = line.find("agent").expect("mode visible");
-        let model_pos = line.find("deepseek-v4-flash").expect("model visible");
+        let model_pos = line.find("MetisOS").expect("model visible");
         let cost_pos = line.find("$0.42").expect("cost visible on left");
         let status_pos = line.find("working").expect("status visible");
         assert!(mode_pos < model_pos);
@@ -1244,12 +1245,12 @@ mod tests {
     /// a transient signal.
     #[test]
     fn footer_cost_outranks_status_when_space_tight() {
-        // "agent · deepseek-v4-flash · $0.42 · refreshing context" = 53 cols.
-        // At 47 the status drops but the cost survives (47 ≥ 36 mode+model+cost).
+        // "agent · MetisOS · $0.42 · refreshing context" ≈ 45 cols.
+        // At 37 the status drops but the cost survives (37 ≥ 26 mode+model+cost).
         let props = props_with_status_and_cost("refreshing context", "$0.42");
-        let line = render_at_width(props, 47);
+        let line = render_at_width(props, 37);
         assert!(line.contains("agent"));
-        assert!(line.contains("deepseek-v4-flash"));
+        assert!(line.contains("MetisOS"));
         assert!(
             line.contains("$0.42"),
             "cost survives status drop: {line:?}"
@@ -1284,6 +1285,6 @@ mod tests {
         let rendered: String = (0..area.width).map(|x| buf[(x, 0)].symbol()).collect();
         assert!(rendered.contains("session saved"));
         assert!(!rendered.contains("agent"));
-        assert!(!rendered.contains("deepseek-v4-flash"));
+        assert!(!rendered.contains("MetisOS"));
     }
 }
