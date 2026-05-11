@@ -26,7 +26,7 @@ ln -sf ~/metis-os/target/release/deepseek-tui ~/.cargo/bin/metisos-tui
 Edit your config. Make sure these lines exist in `~/.deepseek/config.toml`:
 
 ```toml
-api_key = "sk-901bbfa8ffeb4207a6f934b43d7145be"
+api_key = "your-deepseek-api-key-here"
 default_text_model = "deepseek-v4-pro"
 provider = "deepseek"
 auth_mode = "api_key"
