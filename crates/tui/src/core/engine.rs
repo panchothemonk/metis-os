@@ -333,7 +333,6 @@ pub struct Engine {
     /// cache-hit behavior is audited.
     seam_manager: Option<SeamManager>,
     coherence_state: CoherenceState,
-    auto_dream: bool,
     turn_counter: u64,
     /// Post-edit LSP diagnostics injection (#136). Populated unconditionally
     /// — when LSP is disabled in config, this is an inert manager that
@@ -558,7 +557,6 @@ impl Engine {
             turn_counter: 0,
             lsp_manager,
             pending_lsp_blocks: Vec::new(),
-            auto_dream: api_config.auto_dream.unwrap_or(false),
             workshop_vars,
             sandbox_backend,
         };
@@ -1255,10 +1253,10 @@ impl Engine {
             .await;
     }
 
-    /// Auto-dreaming: after compaction, enqueue a background memory extraction.
+    /// Auto-dreaming: after compaction, enqueue memory extraction.
     async fn spawn_auto_dream(&mut self) {
         let _ = self.tx_event.send(crate::core::events::Event::status(
-            "🧠 Auto-dreaming triggered — extracting memories from past sessions...".to_string()
+            "🧠 Auto-dreaming: type /dream to extract memories from past sessions".to_string()
         )).await;
     }
 
