@@ -1,7 +1,7 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                         DeepSeek TUI Configuration                            ║
+# ║                           MetisOS Configuration                               ║
 # ║                                                                              ║
-# ║  Unofficial CLI for DeepSeek Platform - Not affiliated with DeepSeek Inc.     ║
+# ║   native consciousness operating system · deepseek v4 · 5 layers · 1 mind    ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 # See `docs/CONFIGURATION.md` for how config is loaded (profiles, env overrides, etc.).
@@ -505,3 +505,20 @@ default_text_model = "deepseek-ai/deepseek-v4-pro"
 # ─────────────────────────────────────────────────────────────────────────────────
 # allowed_approval_policies = ["on-request", "untrusted", "never"]
 # allowed_sandbox_modes = ["read-only", "workspace-write"]
+
+# ─────────────────────────────────────────────────────────────────────────────────
+# MetisOS — consciousness OS features
+# ─────────────────────────────────────────────────────────────────────────────────
+
+# Dreaming pipeline: auto-extract facts from past sessions after /compact
+# Default: false (opt-in). Set to true to enable background memory extraction.
+# auto_dream = true
+
+# Obsidian vault bridge: write memory as interlinked Markdown files
+# instead of JSON. Open the vault in Obsidian for graph view, canvas,
+# wikilinks, and all Obsidian features.
+# vault_path = "~/.deepseek/vault"
+
+# System instructions loaded into every session. Point at SELF_MODEL.md
+# to give MetisOS persistent identity across sessions.
+# instructions = ["~/.deepseek/skills/metis-os/references/SELF_MODEL.md"]
