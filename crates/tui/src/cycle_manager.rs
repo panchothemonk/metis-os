@@ -978,6 +978,8 @@ mod tests {
 
     #[test]
     fn archive_cycle_writes_jsonl_with_header_and_messages() {
+        use crate::test_support::lock_test_env;
+        let _lock = lock_test_env();
         let dir = tempdir().expect("tempdir");
         let session_id = format!("test-session-{}", uuid::Uuid::new_v4());
 

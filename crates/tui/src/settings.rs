@@ -886,12 +886,7 @@ mod tests {
     // TuiPrefs tests
     // ────────────────────────────────────────────────────────────────────────
 
-    /// Serialise tests that mutate `DEEPSEEK_CONFIG_PATH` through this guard
-    /// so the parallel test runner doesn't observe interleaved env values.
-    fn config_path_test_guard() -> std::sync::MutexGuard<'static, ()> {
-        static GUARD: std::sync::Mutex<()> = std::sync::Mutex::new(());
-        GUARD.lock().unwrap_or_else(|e| e.into_inner())
-    }
+    use crate::test_support::lock_test_env;
 
     #[test]
     fn tui_prefs_defaults_are_dark_theme_zero_font() {
@@ -962,7 +957,7 @@ mod tests {
 
     #[test]
     fn tui_prefs_load_returns_defaults_when_file_absent() {
-        let _g = config_path_test_guard();
+        let _g = lock_test_env();
         // Point config path at a non-existent location so tui.toml is absent.
         let tmp = std::env::temp_dir().join("dst_tui_prefs_absent_test");
         std::fs::create_dir_all(&tmp).unwrap();
@@ -984,7 +979,7 @@ mod tests {
 
     #[test]
     fn tui_prefs_save_and_load_round_trip() {
-        let _g = config_path_test_guard();
+        let _g = lock_test_env();
         let tmp = std::env::temp_dir().join("dst_tui_prefs_save_test");
         std::fs::create_dir_all(&tmp).unwrap();
         // SAFETY: test-only env mutation guarded by config_path_test_guard.
@@ -1019,7 +1014,7 @@ mod tests {
 
     #[test]
     fn tui_prefs_path_uses_home_deepseek_subdir_by_default() {
-        let _g = config_path_test_guard();
+        let _g = lock_test_env();
         // Without DEEPSEEK_CONFIG_PATH the path should end with
         // .deepseek/tui.toml relative to the home directory.
         // We skip this check if home_dir() is unavailable (CI without HOME).
