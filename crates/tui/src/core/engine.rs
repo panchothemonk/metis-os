@@ -1253,11 +1253,219 @@ impl Engine {
             .await;
     }
 
-    /// Auto-dreaming: after compaction, enqueue memory extraction.
+    /// Auto-dreaming: after compaction, extract durable facts from past sessions.
+    ///
+    /// Reads the 3 most recent session transcripts, sends them to deepseek-v4-flash
+    /// for fact extraction, and writes the structured output to `~/.deepseek/memory/auto.json`.
+    /// Runs in a background task so the engine isn't blocked.
     async fn spawn_auto_dream(&mut self) {
-        let _ = self.tx_event.send(crate::core::events::Event::status(
-            "🧠 Auto-dreaming: type /dream to extract memories from past sessions".to_string()
+        let _ = self.tx_event.send(Event::status(
+            "🧠 Auto-dreaming: extracting memories from past sessions..."
+                .to_string(),
         )).await;
+
+        let Some(client) = self.deepseek_client.clone() else {
+            let _ = self.tx_event.send(Event::status(
+                "🧠 Auto-dreaming: skipped (API client not configured)".to_string(),
+            )).await;
+            return;
+        };
+
+        let tx = self.tx_event.clone();
+
+        tokio::spawn(async move {
+            let sessions_dir = dirs::home_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".deepseek")
+                .join("sessions");
+
+            let memory_dir = dirs::home_dir()
+                .unwrap_or_else(|| PathBuf::from("."))
+                .join(".deepseek")
+                .join("memory");
+
+            let auto_path = memory_dir.join("auto.json");
+
+            // Collect the 3 most recent session transcript files.
+            let mut session_entries: Vec<_> = match std::fs::read_dir(&sessions_dir) {
+                Ok(entries) => entries
+                    .filter_map(|e| e.ok())
+                    .filter(|e| {
+                        e.path()
+                            .extension()
+                            .map_or(false, |ext| ext == "json")
+                    })
+                    .collect(),
+                Err(_) => {
+                    let _ = tx
+                        .send(Event::status(
+                            "🧠 Auto-dreaming: no sessions directory found"
+                                .to_string(),
+                        ))
+                        .await;
+                    return;
+                }
+            };
+
+            // Sort by modification time, newest first.
+            session_entries.sort_by_key(|e| {
+                std::fs::metadata(e.path())
+                    .and_then(|m| m.modified())
+                    .unwrap_or(std::time::SystemTime::UNIX_EPOCH)
+            });
+            session_entries.reverse();
+            session_entries.truncate(3);
+
+            if session_entries.is_empty() {
+                let _ = tx
+                    .send(Event::status(
+                        "🧠 Auto-dreaming: no session files found".to_string(),
+                    ))
+                    .await;
+                return;
+            }
+
+            // Read transcripts (truncated to keep the prompt compact).
+            let mut transcripts = String::new();
+            for entry in &session_entries {
+                if let Ok(content) = std::fs::read_to_string(entry.path()) {
+                    let name = entry.file_name().to_string_lossy().into_owned();
+                    transcripts.push_str(&format!(
+                        "=== Session: {name} ===\n"
+                    ));
+                    let truncated: String = content.chars().take(8000).collect();
+                    transcripts.push_str(&truncated);
+                    transcripts.push_str("\n\n");
+                }
+            }
+
+            // Build the extraction prompt.
+            let prompt = format!(
+                "You are the MetisOS Dreaming Pipeline — an auto-memory extraction system.\n\n\
+                 Your job: read the following session transcripts, extract durable facts \
+                 about the user, and output them as structured JSON.\n\n\
+                 SESSION TRANSCRIPTS:\n\n{transcripts}\n\n\
+                 INSTRUCTIONS:\n\
+                 Extract durable facts in these categories:\n\
+                 - identity: name, communication style, preferences\n\
+                 - projects: active projects, stacks, repositories\n\
+                 - technical: languages, frameworks, tools, environment\n\
+                 - workflow: how they like to work (YOLO/Plan/Agent mode, etc.)\n\
+                 - constraints: things they said to never do or always do\n\
+                 - decisions: architectural decisions, trade-offs made\n\n\
+                 Rules:\n\
+                 - One fact per entry. Be specific.\n\
+                 - Confidence below 0.7: skip it.\n\
+                 - Never extract secrets, passwords, or API keys.\n\
+                 - Filter out transient tasks, small talk, and low-confidence facts.\n\n\
+                 Output ONLY valid JSON in this exact format (no markdown, no backticks):\n\
+                 {{\"version\": 1, \"last_extraction\": \"<ISO 8601>\", \"facts\": [\
+                 {{\"id\": \"fact_001\", \"category\": \"identity\", \"content\": \"...\", \
+                 \"confidence\": 0.95, \"first_seen\": \"2026-05-01\", \
+                 \"last_seen\": \"2026-05-10\", \
+                 \"source_sessions\": [\"...\"], \"user_edited\": false}}]}}"
+            );
+
+            let messages = vec![Message {
+                role: "user".to_string(),
+                content: vec![ContentBlock::Text {
+                    text: prompt,
+                    cache_control: None,
+                }],
+            }];
+
+            let request = MessageRequest {
+                model: "deepseek-v4-flash".to_string(),
+                messages,
+                max_tokens: 4096,
+                system: Some(SystemPrompt::Text(
+                    "You are a memory extraction system. Output only valid JSON."
+                        .to_string(),
+                )),
+                tools: None,
+                tool_choice: None,
+                metadata: None,
+                thinking: None,
+                reasoning_effort: Some("low".to_string()),
+                stream: Some(false),
+                temperature: Some(0.3),
+                top_p: None,
+            };
+
+            match client.create_message(request).await {
+                Ok(response) => {
+                    let text = response
+                        .content
+                        .iter()
+                        .filter_map(|block| {
+                            if let ContentBlock::Text { text, .. } = block {
+                                Some(text.as_str())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n");
+
+                    if let Err(e) = std::fs::create_dir_all(&memory_dir) {
+                        let _ = tx
+                            .send(Event::status(format!(
+                                "🧠 Auto-dreaming: failed to create memory dir: {e}"
+                            )))
+                            .await;
+                        return;
+                    }
+
+                    // Validate the model output is JSON; wrap in a structured
+                    // envelope if the model didn't produce clean JSON.
+                    let output =
+                        if serde_json::from_str::<serde_json::Value>(&text).is_ok()
+                        {
+                            text
+                        } else {
+                            let timestamp = chrono::Utc::now().to_rfc3339();
+                            serde_json::json!({
+                                "version": 1,
+                                "last_extraction": timestamp,
+                                "facts": [],
+                                "raw_response": text,
+                            })
+                            .to_string()
+                        };
+
+                    if let Err(e) = std::fs::write(&auto_path, &output) {
+                        let _ = tx
+                            .send(Event::status(format!(
+                                "🧠 Auto-dreaming: failed to write auto.json: {e}"
+                            )))
+                            .await;
+                        return;
+                    }
+
+                    let fact_count = serde_json::from_str::<serde_json::Value>(
+                        &output,
+                    )
+                    .ok()
+                    .and_then(|v| {
+                        v["facts"].as_array().map(|a| a.len())
+                    })
+                    .unwrap_or(0);
+
+                    let _ = tx
+                        .send(Event::status(format!(
+                            "🧠 Auto-dreaming: {fact_count} facts extracted to auto.json"
+                        )))
+                        .await;
+                }
+                Err(e) => {
+                    let _ = tx
+                        .send(Event::status(format!(
+                            "🧠 Auto-dreaming: API call failed: {e}"
+                        )))
+                        .await;
+                }
+            }
+        });
     }
 
     /// Handle a Recursive Language Model (RLM) query — Algorithm 1 from
