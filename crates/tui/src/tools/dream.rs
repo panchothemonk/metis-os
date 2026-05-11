@@ -144,6 +144,12 @@ fn dream_run() -> Result<ToolResult, ToolError> {
         ));
     }
 
+    // Bootstrap the Obsidian vault if configured
+    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    if vault_root.exists() {
+        let _ = super::obsidian_vault::bootstrap_vault(&vault_root);
+    }
+
     // Return the extraction prompt so the model can continue the pipeline
     Ok(ToolResult::success(format!(
         "Dreaming pipeline initiated. {} session transcripts available.\n\n\

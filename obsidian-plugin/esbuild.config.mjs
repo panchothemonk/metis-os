@@ -1,9 +1,9 @@
-const esbuild = require("esbuild");
-const builtins = require("builtin-modules");
+import esbuild from "esbuild";
+import builtins from "builtin-modules";
 
 const prod = process.argv[2] === "production";
 
-esbuild.build({
+await esbuild.build({
   entryPoints: ["main.ts"],
   bundle: true,
   external: ["obsidian", "electron", ...builtins],
@@ -13,4 +13,4 @@ esbuild.build({
   sourcemap: prod ? false : "inline",
   minify: prod,
   outfile: "main.js",
-}).catch(() => process.exit(1));
+});

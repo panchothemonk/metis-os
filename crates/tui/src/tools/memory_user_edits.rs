@@ -182,6 +182,11 @@ fn cmd_add(content: &str) -> Result<ToolResult, ToolError> {
     let ts = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     state.edits.push(MemoryEdit { line: next, content: text.to_string(), timestamp: ts });
     save_state(&state).map_err(|e| ToolError::execution_failed(e.to_string()))?;
+    // Mirror to Obsidian vault if it exists
+    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    if vault_root.join("MetisOS").exists() {
+        let _ = super::obsidian_vault::write_edit(&vault_root, next, text);
+    }
     Ok(ToolResult::success(format!("Added memory #{}: {}", next, truncate(text, 120))))
 }
 
@@ -203,6 +208,11 @@ fn cmd_replace(line: usize, content: &str) -> Result<ToolResult, ToolError> {
     state.edits[idx].content = text.to_string();
     state.edits[idx].timestamp = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     save_state(&state).map_err(|e| ToolError::execution_failed(e.to_string()))?;
+    // Mirror to Obsidian vault if it exists
+    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    if vault_root.join("MetisOS").exists() {
+        let _ = super::obsidian_vault::write_edit(&vault_root, line, text);
+    }
     Ok(ToolResult::success(format!(
         "Replaced #{line}.\nOld: {}\nNew: {}",
         truncate(&old, 120),
