@@ -1241,7 +1241,11 @@ impl App {
         };
         let cached_skills = Self::discover_cached_skills(&workspace);
 
-        let input_history = crate::composer_history::load_history();
+        let input_history = if std::env::var("DEEPSEEK_TEST_MODE").is_ok() {
+            Vec::new()
+        } else {
+            crate::composer_history::load_history()
+        };
         let (initial_input_text, initial_input_cursor) = match initial_input {
             // #451: pre-populate the composer when invoked via
             // `deepseek pr <N>` (or any future caller that wants to
@@ -3921,6 +3925,8 @@ mod tests {
     use crate::tui::clipboard::PastedImage;
 
     fn test_options(yolo: bool) -> TuiOptions {
+        // SAFETY: test-only env var for isolating test App from user disk data
+        unsafe { std::env::set_var("DEEPSEEK_TEST_MODE", "1") };
         TuiOptions {
             model: "test-model".to_string(),
             workspace: PathBuf::from("."),

@@ -148,6 +148,8 @@ mod tests {
     use std::path::PathBuf;
 
     fn test_options() -> TuiOptions {
+        // SAFETY: test-only env var for isolating test App from user disk data
+        unsafe { std::env::set_var("DEEPSEEK_TEST_MODE", "1") };
         TuiOptions {
             model: "deepseek-v4-pro".to_string(),
             workspace: PathBuf::from("."),

@@ -1,5 +1,6 @@
 //! MetisOS color palette — Consciousness aesthetic.
 //! Deep void background with electric purple/cyan accents.
+#![allow(dead_code)]
 
 use ratatui::style::Color;
 

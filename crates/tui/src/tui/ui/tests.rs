@@ -704,6 +704,8 @@ fn tool_path_relevance_extracts_paths_from_command_text() {
 }
 
 fn create_test_app() -> App {
+    // SAFETY: test-only env var for isolating test App from user disk data
+    unsafe { std::env::set_var("DEEPSEEK_TEST_MODE", "1") };
     let options = TuiOptions {
         model: "deepseek-v4-pro".to_string(),
         workspace: PathBuf::from("."),

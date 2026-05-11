@@ -3,6 +3,7 @@
 //! Unlike the `/dream` slash-command (which requires the human to type it),
 //! this tool lets the model itself trigger the dreaming extraction pipeline.
 //! It can run extraction, check status, or show the extraction prompt.
+#![allow(dead_code)]
 
 use async_trait::async_trait;
 use serde_json::{Value, json};

@@ -11,3 +11,9 @@ reasoning_effort = "max"
 
 [memory]
 enabled = true
+
+# Auto-dream: extract facts from past sessions after /compact
+auto_dream = true
+
+# Obsidian vault bridge: write memory as interlinked Markdown files
+vault_path = "~/.deepseek/vault"
