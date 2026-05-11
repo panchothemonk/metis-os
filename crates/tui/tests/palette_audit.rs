@@ -1,8 +1,8 @@
 //! Palette audit tests to prevent color drift.
 //!
 //! These tests ensure that deprecated colors (like DEEPSEEK_AQUA) are not used
-//! directly in user-visible code. The palette should only use DeepSeek brand
-//! colors: blue, sky, red (plus neutral shades).
+//! directly in user-visible code. The palette uses MetisOS brand colors:
+//! purple (consciousness), cyan (reasoning), red (error), plus neutral shades.
 
 use std::fs;
 use std::path::Path;
@@ -140,7 +140,7 @@ fn verify_status_success_uses_sky() {
 
     assert!(
         content.contains("pub const STATUS_SUCCESS: Color = DEEPSEEK_SKY;"),
-        "STATUS_SUCCESS should use DEEPSEEK_SKY, not DEEPSEEK_AQUA"
+        "STATUS_SUCCESS should use DEEPSEEK_SKY (MetisOS cyan), not DEEPSEEK_AQUA"
     );
 }
 
@@ -151,16 +151,16 @@ fn verify_brand_colors_defined() {
     let content = fs::read_to_string(&palette_path).expect("Failed to read palette.rs");
 
     assert!(
-        content.contains("DEEPSEEK_BLUE_RGB: (u8, u8, u8) = (53, 120, 229);"),
-        "DEEPSEEK_BLUE should be #3578E5"
+        content.contains("METIS_PURPLE_RGB: (u8, u8, u8) = (192, 77, 255)"),
+        "METIS_PURPLE should be #C04DFF (consciousness purple)"
     );
     assert!(
-        content.contains("DEEPSEEK_SKY_RGB: (u8, u8, u8) = (106, 174, 242);"),
-        "DEEPSEEK_SKY should be #6AAEF2"
+        content.contains("METIS_CYAN_RGB: (u8, u8, u8) = (0, 229, 255)"),
+        "METIS_CYAN should be #00E5FF (reasoning cyan)"
     );
     assert!(
-        content.contains("DEEPSEEK_RED_RGB: (u8, u8, u8) = (226, 80, 96);"),
-        "DEEPSEEK_RED should be #E25060"
+        content.contains("METIS_RED_RGB: (u8, u8, u8) = (255, 68, 102)"),
+        "METIS_RED should be #FF4466 (error red)"
     );
 }
 

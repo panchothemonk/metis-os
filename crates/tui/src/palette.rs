@@ -119,7 +119,7 @@ pub const LIGHT_SELECTION_BG: Color = Color::Rgb(
 // ── Text colors ──────────────────────────────────────────────────
 pub const TEXT_BODY: Color = Color::Rgb(232, 226, 244); // #E8E2F4 — soft purple-white
 pub const TEXT_SECONDARY: Color = Color::Rgb(170, 160, 200); // #AAA0C8 — muted purple
-pub const TEXT_HINT: Color = Color::Rgb(120, 110, 155); // #786E9B — dim purple
+pub const TEXT_HINT: Color = Color::Rgb(132, 120, 170); // #8478AA — dim purple, WCAG AA on void
 pub const TEXT_ACCENT: Color = DEEPSEEK_SKY; // cyan
 pub const SELECTION_TEXT: Color = Color::White;
 pub const TEXT_SOFT: Color = Color::Rgb(220, 212, 238); // #DCD4EE
