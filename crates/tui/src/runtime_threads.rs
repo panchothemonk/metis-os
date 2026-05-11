@@ -1957,6 +1957,7 @@ impl RuntimeThreadManager {
             )
             .tag()
             .to_string(),
+            auto_dream: self.config.auto_dream.unwrap_or(false),
             workshop: self.config.workshop.clone(),
         };
 

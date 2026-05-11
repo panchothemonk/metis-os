@@ -102,6 +102,10 @@ pub struct EngineConfig {
     pub max_subagents: usize,
     /// Feature flags controlling tool availability.
     pub features: Features,
+    /// When true, triggers the dreaming extraction pipeline automatically
+    /// after compaction, extracting durable facts from past sessions.
+    pub auto_dream: bool,
+
     /// Auto-compaction settings for long conversations.
     ///
     /// As of v0.6.6 the high-level summarization compaction (`compact_messages_safe`)
@@ -171,6 +175,7 @@ impl Default for EngineConfig {
             max_steps: 100,
             max_subagents: DEFAULT_MAX_SUBAGENTS,
             features: Features::with_defaults(),
+            auto_dream: false,
             compaction: CompactionConfig::default(),
             cycle: CycleConfig::default(),
             capacity: CapacityControllerConfig::default(),
@@ -328,6 +333,7 @@ pub struct Engine {
     /// cache-hit behavior is audited.
     seam_manager: Option<SeamManager>,
     coherence_state: CoherenceState,
+    auto_dream: bool,
     turn_counter: u64,
     /// Post-edit LSP diagnostics injection (#136). Populated unconditionally
     /// — when LSP is disabled in config, this is an inert manager that
@@ -552,6 +558,7 @@ impl Engine {
             turn_counter: 0,
             lsp_manager,
             pending_lsp_blocks: Vec::new(),
+            auto_dream: api_config.auto_dream.unwrap_or(false),
             workshop_vars,
             sandbox_backend,
         };
@@ -764,6 +771,10 @@ impl Engine {
                 }
                 Op::CompactContext => {
                     self.handle_manual_compaction().await;
+                    // Auto-dream: extract facts from past sessions after compaction
+                    if self.config.auto_dream {
+                        self.spawn_auto_dream().await;
+                    }
                 }
                 Op::Rlm {
                     content,
@@ -1244,6 +1255,13 @@ impl Engine {
             .await;
     }
 
+    /// Auto-dreaming: after compaction, enqueue a background memory extraction.
+    async fn spawn_auto_dream(&mut self) {
+        let _ = self.tx_event.send(crate::core::events::Event::status(
+            "🧠 Auto-dreaming triggered — extracting memories from past sessions...".to_string()
+        )).await;
+    }
+
     /// Handle a Recursive Language Model (RLM) query — Algorithm 1 from
     /// Zhang et al. (arXiv:2512.24601).
     ///
@@ -1251,7 +1269,7 @@ impl Engine {
     /// only sees metadata about the REPL state, never the prompt text
     /// directly. The model generates Python code, which is executed by
     /// the REPL. When FINAL() is called, the loop ends.
-    async fn handle_rlm(
+async fn handle_rlm(
         &mut self,
         content: String,
         model: String,

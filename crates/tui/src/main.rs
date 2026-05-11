@@ -4210,6 +4210,7 @@ async fn run_exec_agent(
         )
         .tag()
         .to_string(),
+        auto_dream: config.auto_dream.unwrap_or(false),
         workshop: config.workshop.clone(),
     };
 

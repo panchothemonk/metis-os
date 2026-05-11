@@ -75,7 +75,7 @@ impl Drop for ScopedDeepSeekApiKey {
 }
 
 fn build_engine_with_capacity(capacity: CapacityControllerConfig) -> Engine {
-    let engine_config = EngineConfig {
+    let engine_config = EngineConfig { auto_dream: false,
         capacity,
         ..Default::default()
     };
@@ -165,7 +165,7 @@ fn engine_handle_cancel_tracks_latest_turn_token() {
 
 #[test]
 fn engine_initial_prompt_includes_configured_goal() {
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         goal_objective: Some("Fix goal handoff".to_string()),
         ..Default::default()
     };
@@ -769,7 +769,7 @@ fn refresh_system_prompt_leaves_working_set_out_of_system_prompt() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/lib.rs"), "pub fn sample() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -799,7 +799,7 @@ fn working_set_reaches_model_as_turn_metadata() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/lib.rs"), "pub fn sample() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -828,7 +828,7 @@ fn working_set_reaches_model_as_turn_metadata() {
 #[test]
 fn turn_metadata_includes_current_local_date_without_working_set() {
     let tmp = tempdir().expect("tempdir");
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -853,7 +853,7 @@ fn turn_metadata_includes_current_local_date_without_working_set() {
 #[test]
 fn user_text_message_keeps_current_turn_input_after_turn_metadata() {
     let tmp = tempdir().expect("tempdir");
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -883,7 +883,7 @@ fn messages_with_turn_metadata_preserves_stored_messages_for_prefix_cache() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/lib.rs"), "pub fn sample() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -927,7 +927,7 @@ fn turn_metadata_skips_tool_result_messages() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/lib.rs"), "pub fn sample() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -993,7 +993,7 @@ fn turn_metadata_skips_when_only_tool_results_trail() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/lib.rs"), "pub fn sample() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -1032,7 +1032,7 @@ fn turn_metadata_skips_when_only_tool_results_trail() {
 #[test]
 fn refresh_system_prompt_is_noop_when_unchanged() {
     let tmp = tempdir().expect("tempdir");
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -1053,7 +1053,7 @@ fn compaction_summary_stays_in_stable_system_prompt() {
     fs::create_dir_all(tmp.path().join("src")).expect("mkdir");
     fs::write(tmp.path().join("src/main.rs"), "fn main() {}").expect("write");
 
-    let config = EngineConfig {
+    let config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         ..Default::default()
     };
@@ -1983,7 +1983,7 @@ async fn post_edit_hook_injects_diagnostics_message_before_next_request() {
     fs::write(&target, "let x: i32 = \"not a number\";").unwrap();
 
     let lsp_config = crate::lsp::LspConfig::default();
-    let engine_config = EngineConfig {
+    let engine_config = EngineConfig { auto_dream: false,
         workspace: workspace.clone(),
         lsp_config: Some(lsp_config),
         ..Default::default()
@@ -2046,7 +2046,7 @@ async fn post_edit_hook_is_silent_when_lsp_disabled() {
         enabled: false,
         ..Default::default()
     };
-    let engine_config = EngineConfig {
+    let engine_config = EngineConfig { auto_dream: false,
         workspace: workspace.clone(),
         lsp_config: Some(lsp_config),
         ..Default::default()
@@ -2068,7 +2068,7 @@ async fn post_edit_hook_skips_unknown_tool_names() {
     use std::sync::Arc;
 
     let tmp = tempdir().expect("tempdir");
-    let engine_config = EngineConfig {
+    let engine_config = EngineConfig { auto_dream: false,
         workspace: tmp.path().to_path_buf(),
         lsp_config: Some(crate::lsp::LspConfig::default()),
         ..Default::default()

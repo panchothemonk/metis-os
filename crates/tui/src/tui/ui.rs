@@ -540,6 +540,7 @@ fn build_engine_config(app: &App, config: &Config) -> EngineConfig {
         strict_tool_mode: config.strict_tool_mode.unwrap_or(false),
         goal_objective: app.goal.goal_objective.clone(),
         locale_tag: app.ui_locale.tag().to_string(),
+        auto_dream: config.auto_dream.unwrap_or(false),
         workshop: config.workshop.clone(),
     }
 }

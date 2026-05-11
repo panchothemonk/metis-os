@@ -848,6 +848,12 @@ pub struct Config {
     #[serde(default)]
     pub vault_path: Option<String>,
 
+    /// When true, MetisOS automatically triggers the dreaming extraction
+    /// pipeline after each session (on compaction). Extracts durable facts
+    /// from past conversations without the user having to type /dream.
+    #[serde(default)]
+    pub auto_dream: Option<bool>,
+
     /// Workshop / large-tool-output routing (#548). When absent, the global
     /// default threshold of 4 096 tokens applies and routing is active.
     #[serde(default)]
@@ -2436,6 +2442,7 @@ fn merge_config(base: Config, override_cfg: Config) -> Config {
         features: merge_features(base.features, override_cfg.features),
         notifications: override_cfg.notifications.or(base.notifications),
         vault_path: override_cfg.vault_path.or(base.vault_path),
+        auto_dream: override_cfg.auto_dream.or(base.auto_dream),
         network: override_cfg.network.or(base.network),
         skills: override_cfg.skills.or(base.skills),
         snapshots: override_cfg.snapshots.or(base.snapshots),

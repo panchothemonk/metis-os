@@ -196,6 +196,10 @@ pub struct ConfigToml {
     #[serde(default)]
     pub vault_path: Option<String>,
 
+    /// When true, automatically triggers dreaming extraction after sessions.
+    #[serde(default)]
+    pub auto_dream: Option<bool>,
+
     #[serde(flatten)]
     pub extras: BTreeMap<String, toml::Value>,
 }
