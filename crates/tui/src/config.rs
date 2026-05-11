@@ -3405,7 +3405,7 @@ mod tests {
         // `save_api_key` writes to the shared user config file. This
         // pins the boring v0.8.8 setup path and avoids platform
         // credential prompts during onboarding.
-        
+
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3441,7 +3441,6 @@ mod tests {
 
     #[test]
     fn ensure_config_file_exists_creates_first_run_template() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3467,7 +3466,6 @@ mod tests {
 
     #[test]
     fn workspace_trust_round_trips_through_global_config() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3503,7 +3501,6 @@ mod tests {
 
     #[test]
     fn workspace_trust_reads_existing_projects_table() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3536,7 +3533,6 @@ mod tests {
 
     #[test]
     fn save_api_key_rejects_empty_input() {
-        
         let err = save_api_key("   ").expect_err("empty should bail");
         assert!(
             err.to_string().contains("empty"),
@@ -3572,7 +3568,7 @@ mod tests {
         // Pins the v0.8.8 contract: `has_api_key` covers the prompt-free
         // sources used by `Config::deepseek_api_key` (in-memory override,
         // env var, config-file slot).
-        
+
         // Explicit in-memory key wins over every other source per
         // `Config::deepseek_api_key`'s "Path 0" override.
         let cfg = Config {
@@ -3653,7 +3649,6 @@ mod tests {
 
     #[test]
     fn has_api_key_uses_active_provider_env_key() -> Result<()> {
-        
         for (provider, env_var) in [
             ("openai", "OPENAI_API_KEY"),
             ("openrouter", "OPENROUTER_API_KEY"),
@@ -3702,7 +3697,6 @@ mod tests {
     /// so a stale credential can't shadow a fresh login.
     #[test]
     fn clear_api_key_strips_root_and_provider_scoped_keys() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3758,7 +3752,6 @@ api_key = "old-openrouter-key"
     /// key takes effect immediately.
     #[test]
     fn deepseek_api_key_prefers_explicit_in_memory_override() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3784,7 +3777,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn deepseek_api_key_prefers_saved_config_over_stale_env() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3813,7 +3805,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn active_provider_detects_env_only_api_key() -> Result<()> {
-        
         let temp_root =
             env::temp_dir().join(format!("deepseek-tui-env-only-key-{}", std::process::id()));
         fs::create_dir_all(&temp_root)?;
@@ -3839,7 +3830,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn deepseek_api_key_ignores_sentinel_placeholder() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3867,7 +3857,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn test_tilde_expansion_in_paths() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3896,7 +3885,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn test_load_uses_tilde_expanded_deepseek_config_path() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3925,7 +3913,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn test_load_falls_back_to_home_config_when_env_path_missing() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -3984,7 +3971,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn test_save_api_key_doesnt_match_similar_keys() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4031,7 +4017,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn apply_env_overrides_ignores_empty_api_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4064,7 +4049,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn apply_env_overrides_does_not_copy_api_key_into_config() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4269,7 +4253,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn deepseek_model_env_overrides_default_text_model() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4298,7 +4281,6 @@ api_key = "old-openrouter-key"
 
     #[test]
     fn http_headers_load_from_root_config() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4362,7 +4344,6 @@ http_headers = { "X-Model-Provider-Id" = "tongyi" }
 
     #[test]
     fn http_headers_env_overrides_config() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4416,7 +4397,6 @@ http_headers = { "X-Model-Provider-Id" = "from-file" }
 
     #[test]
     fn nvidia_nim_provider_normalizes_deepseek_v4_pro_alias() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4460,7 +4440,6 @@ http_headers = { "X-Model-Provider-Id" = "from-file" }
 
     #[test]
     fn nvidia_nim_env_overrides_provider_and_credentials() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4489,7 +4468,6 @@ http_headers = { "X-Model-Provider-Id" = "from-file" }
 
     #[test]
     fn nvidia_nim_env_accepts_short_nim_base_url_alias() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4516,7 +4494,6 @@ http_headers = { "X-Model-Provider-Id" = "from-file" }
 
     #[test]
     fn nvidia_nim_env_accepts_facade_base_url_forwarding() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4560,7 +4537,6 @@ http_headers = { "X-Model-Provider-Id" = "from-file" }
 
     #[test]
     fn openai_provider_accepts_custom_model_and_base_url() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4599,7 +4575,6 @@ model = "glm-5"
 
     #[test]
     fn openai_env_overrides_provider_base_url_and_model() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4633,7 +4608,6 @@ model = "glm-5"
 
     #[test]
     fn openai_env_accepts_facade_base_url_forwarding() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4667,7 +4641,6 @@ model = "glm-5"
 
     #[test]
     fn openrouter_provider_uses_canonical_defaults() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4693,7 +4666,6 @@ model = "glm-5"
 
     #[test]
     fn novita_provider_uses_canonical_defaults() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4719,7 +4691,6 @@ model = "glm-5"
 
     #[test]
     fn fireworks_provider_uses_canonical_defaults() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4745,7 +4716,6 @@ model = "glm-5"
 
     #[test]
     fn sglang_provider_works_without_api_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4773,7 +4743,6 @@ model = "glm-5"
 
     #[test]
     fn ollama_provider_uses_local_defaults_without_api_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4801,7 +4770,6 @@ model = "glm-5"
 
     #[test]
     fn ollama_model_is_passed_through_verbatim() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4835,7 +4803,6 @@ model = "qwen2.5-coder:7b"
 
     #[test]
     fn ollama_env_overrides_base_url_and_model() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4864,7 +4831,6 @@ model = "qwen2.5-coder:7b"
 
     #[test]
     fn openrouter_env_api_key_resolves_via_deepseek_api_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4891,7 +4857,6 @@ model = "qwen2.5-coder:7b"
 
     #[test]
     fn novita_env_api_key_resolves_via_deepseek_api_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4918,7 +4883,6 @@ model = "qwen2.5-coder:7b"
 
     #[test]
     fn openrouter_base_url_env_overrides_default() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4945,7 +4909,6 @@ model = "qwen2.5-coder:7b"
 
     #[test]
     fn openrouter_reads_provider_table_from_config_file() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -4979,7 +4942,6 @@ base_url = "https://or-table.example/v1"
 
     #[test]
     fn openrouter_custom_base_url_preserves_provider_model() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5015,7 +4977,6 @@ model = "DeepSeek-V4-Pro"
 
     #[test]
     fn novita_reads_provider_table_from_config_file() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5048,7 +5009,6 @@ api_key = "novita-table-key"
 
     #[test]
     fn has_api_key_for_detects_env_and_config_per_provider() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5099,7 +5059,6 @@ api_key = "novita-table-key"
 
     #[test]
     fn has_api_key_for_uses_deepseek_cn_provider_table() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5136,7 +5095,6 @@ api_key = "novita-table-key"
 
     #[test]
     fn save_api_key_for_openrouter_writes_provider_table() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5214,7 +5172,6 @@ api_key = "novita-table-key"
 
     #[test]
     fn save_api_key_for_deepseek_cn_uses_root_deepseek_storage() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5226,6 +5183,18 @@ api_key = "novita-table-key"
         ));
         fs::create_dir_all(&temp_root)?;
         let _guard = EnvGuard::new(&temp_root);
+
+        // Defensive: capture the path explicitly so a concurrent env race
+        // (parallel test runner) can't cause us to read a stale file.
+        // save_api_key_for returns the path it actually wrote to.
+        let path = save_api_key_for(ApiProvider::DeepseekCN, "cn-saved-key")?;
+        // Force a re-check that default_config_path is still consistent.
+        let canonical = default_config_path()
+            .ok_or_else(|| anyhow::anyhow!("default_config_path disappeared"))?;
+        assert_eq!(
+            path, canonical,
+            "config path changed mid-test (parallel test env race)"
+        );
 
         let path = save_api_key_for(ApiProvider::DeepseekCN, "cn-saved-key")?;
         let contents = fs::read_to_string(&path)?;
@@ -5240,7 +5209,6 @@ api_key = "novita-table-key"
 
     #[test]
     fn nvidia_nim_reads_facade_provider_table() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -5277,7 +5245,6 @@ model = "deepseek-v4-pro"
 
     #[test]
     fn nvidia_nim_provider_table_key_overrides_root_deepseek_key() -> Result<()> {
-        
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()

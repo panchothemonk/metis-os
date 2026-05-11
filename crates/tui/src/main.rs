@@ -1546,9 +1546,7 @@ async fn run_doctor(config: &Config, workspace: &Path, config_path_override: Opt
 
     println!(
         "{}",
-        "MetisOS Doctor"
-            .truecolor(blue_r, blue_g, blue_b)
-            .bold()
+        "MetisOS Doctor".truecolor(blue_r, blue_g, blue_b).bold()
     );
     println!("{}", "==================".truecolor(sky_r, sky_g, sky_b));
     println!();
@@ -5199,12 +5197,13 @@ mod setup_helper_tests {
     use std::collections::BTreeSet;
     use tempfile::TempDir;
 
+    use crate::test_support::lock_test_env;
+
     // Serialize tests that mutate process-global env vars. Without this,
     // `cargo test` runs them in parallel and they race on `DEEPSEEK_API_KEY`,
     // causing intermittent CI failures (one test reads while another's set
     // is still active). `unwrap_or_else` recovers from poisoning so a panic
     // in one test doesn't cascade through the whole module.
-    static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
     #[test]
     fn init_tools_dir_creates_readme_and_example() {
@@ -5360,7 +5359,7 @@ mod setup_helper_tests {
 
     #[test]
     fn plain_launch_preserves_checkpoint_but_starts_fresh() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let _guard = lock_test_env();
         let tmp = TempDir::new().unwrap();
         let workspace = tmp.path().join("workspace");
         std::fs::create_dir_all(&workspace).unwrap();
@@ -5396,7 +5395,7 @@ mod setup_helper_tests {
 
     #[test]
     fn continue_recovers_same_workspace_checkpoint() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let _guard = lock_test_env();
         let tmp = TempDir::new().unwrap();
         let workspace = tmp.path().join("workspace");
         std::fs::create_dir_all(&workspace).unwrap();
@@ -5505,7 +5504,7 @@ mod setup_helper_tests {
 
     #[test]
     fn resolve_api_key_source_reports_env_when_set() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let _guard = lock_test_env();
         let prev = std::env::var("DEEPSEEK_API_KEY").ok();
         let prev_source = std::env::var("DEEPSEEK_API_KEY_SOURCE").ok();
         unsafe {
@@ -5527,7 +5526,7 @@ mod setup_helper_tests {
 
     #[test]
     fn resolve_api_key_source_reports_dispatcher_keyring() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let _guard = lock_test_env();
         let prev = std::env::var("DEEPSEEK_API_KEY").ok();
         let prev_source = std::env::var("DEEPSEEK_API_KEY_SOURCE").ok();
         unsafe {
@@ -5549,7 +5548,7 @@ mod setup_helper_tests {
 
     #[test]
     fn resolve_api_key_source_prefers_config_over_env() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(|p| p.into_inner());
+        let _guard = lock_test_env();
         let prev = std::env::var("DEEPSEEK_API_KEY").ok();
         let prev_source = std::env::var("DEEPSEEK_API_KEY_SOURCE").ok();
         unsafe {

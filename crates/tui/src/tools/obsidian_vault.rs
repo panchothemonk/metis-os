@@ -38,7 +38,12 @@ const DEFAULT_VAULT: &str = ".deepseek/vault";
 
 /// Categories from the dreaming pipeline.
 const CATEGORIES: &[&str] = &[
-    "identity", "projects", "technical", "workflow", "constraints", "decisions",
+    "identity",
+    "projects",
+    "technical",
+    "workflow",
+    "constraints",
+    "decisions",
 ];
 
 /// Category display names for Markdown headings.
@@ -58,20 +63,28 @@ fn category_name(cat: &str) -> &str {
 
 /// Resolve the vault path from config or fall back to default.
 pub fn vault_root(config_vault_path: Option<&str>) -> PathBuf {
-    config_vault_path
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            dirs::home_dir()
-                .unwrap_or_else(|| PathBuf::from("."))
-                .join(DEFAULT_VAULT)
-        })
+    config_vault_path.map(PathBuf::from).unwrap_or_else(|| {
+        dirs::home_dir()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .join(DEFAULT_VAULT)
+    })
 }
 
-fn metisos_dir(root: &Path) -> PathBuf { root.join("MetisOS") }
-fn memory_dir(root: &Path) -> PathBuf { metisos_dir(root).join("Memory") }
-fn edits_dir(root: &Path) -> PathBuf { metisos_dir(root).join("Edits") }
-fn sessions_dir(root: &Path) -> PathBuf { metisos_dir(root).join("Sessions") }
-fn dreams_dir(root: &Path) -> PathBuf { metisos_dir(root).join("Dreams") }
+fn metisos_dir(root: &Path) -> PathBuf {
+    root.join("MetisOS")
+}
+fn memory_dir(root: &Path) -> PathBuf {
+    metisos_dir(root).join("Memory")
+}
+fn edits_dir(root: &Path) -> PathBuf {
+    metisos_dir(root).join("Edits")
+}
+fn sessions_dir(root: &Path) -> PathBuf {
+    metisos_dir(root).join("Sessions")
+}
+fn dreams_dir(root: &Path) -> PathBuf {
+    metisos_dir(root).join("Dreams")
+}
 
 // ── Vault bootstrap ────────────────────────────────────────────
 
@@ -87,7 +100,10 @@ pub fn bootstrap_vault(root: &Path) -> io::Result<()> {
     // Root README
     let readme = metisos_dir(root).join("README.md");
     if !readme.exists() {
-        fs::write(&readme, include_str!("../../../../skills/references/SELF_MODEL.md"))?;
+        fs::write(
+            &readme,
+            include_str!("../../../../skills/references/SELF_MODEL.md"),
+        )?;
     }
 
     // Self-Model as wiki
@@ -127,13 +143,19 @@ fn build_self_model_wiki() -> io::Result<String> {
         // Add category links at top
         out.push_str("## Memory\n");
         for cat in CATEGORIES {
-            out.push_str(&format!("- [[Memory/{cat}|{name}]]\n", cat = cat, name = category_name(cat)));
+            out.push_str(&format!(
+                "- [[Memory/{cat}|{name}]]\n",
+                cat = cat,
+                name = category_name(cat)
+            ));
         }
         out.push_str("\n---\n\n");
         out.push_str(&raw);
         Ok(out)
     } else {
-        Ok(String::from("# Self-Model\n\nSELF_MODEL.md not found. Run MetisOS to generate it.\n"))
+        Ok(String::from(
+            "# Self-Model\n\nSELF_MODEL.md not found. Run MetisOS to generate it.\n",
+        ))
     }
 }
 
@@ -166,7 +188,10 @@ _New entries appended automatically when failure patterns are discovered._
 /// Write an extracted fact to its category page. Appends to the
 /// existing file rather than overwriting.
 pub fn write_fact(root: &Path, category: &str, content: &str, confidence: f64) -> io::Result<()> {
-    let cat = CATEGORIES.iter().find(|c| **c == category).unwrap_or(&"identity");
+    let cat = CATEGORIES
+        .iter()
+        .find(|c| **c == category)
+        .unwrap_or(&"identity");
     let page = memory_dir(root).join(format!("{cat}.md"));
 
     let ts = Utc::now().format("%Y-%m-%d %H:%M UTC");
@@ -249,7 +274,13 @@ fn slugify(text: &str, max_len: usize) -> String {
     let slug: String = text
         .to_lowercase()
         .chars()
-        .map(|c| if c.is_alphanumeric() || c == '-' { c } else { '-' })
+        .map(|c| {
+            if c.is_alphanumeric() || c == '-' {
+                c
+            } else {
+                '-'
+            }
+        })
         .collect();
     let trimmed = slug.trim_matches('-');
     if trimmed.len() <= max_len {

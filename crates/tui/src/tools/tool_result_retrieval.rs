@@ -524,9 +524,7 @@ mod tests {
     }
 
     fn test_lock() -> MutexGuard<'static, ()> {
-        crate::tools::truncate::TEST_SPILLOVER_GUARD
-            .lock()
-            .unwrap_or_else(|err| err.into_inner())
+        crate::tools::truncate::test_spillover_guard()
     }
 
     fn execute_tool(input: Value) -> Result<ToolResult, ToolError> {

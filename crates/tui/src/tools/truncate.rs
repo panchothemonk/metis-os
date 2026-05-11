@@ -64,7 +64,9 @@ pub const SPILLOVER_MAX_AGE: Duration = Duration::from_secs(7 * 24 * 60 * 60);
 static TEST_SPILLOVER_ROOT: std::sync::Mutex<Option<PathBuf>> = std::sync::Mutex::new(None);
 
 #[cfg(test)]
-pub(crate) static TEST_SPILLOVER_GUARD: std::sync::Mutex<()> = std::sync::Mutex::new(());
+pub(crate) fn test_spillover_guard() -> std::sync::MutexGuard<'static, ()> {
+    crate::test_support::lock_test_env()
+}
 
 /// Resolve `~/.deepseek/tool_outputs/`. Returns `None` if the home
 /// directory can't be determined (CI containers occasionally hit
@@ -336,9 +338,7 @@ mod tests {
     /// they mutate process-global `$HOME`. Without it, cargo's
     /// parallel runner would observe interleaved overrides.
     fn setup() -> std::sync::MutexGuard<'static, ()> {
-        super::TEST_SPILLOVER_GUARD
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
+        super::test_spillover_guard()
     }
 
     #[test]

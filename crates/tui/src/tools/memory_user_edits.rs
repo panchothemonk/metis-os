@@ -40,12 +40,23 @@ struct EditsState {
 }
 
 const BLOCKED: &[&str] = &[
-    "password", "passwd",
-    "secret", "api_key", "apikey", "api-key",
-    "token", "credential",
-    "ssh-", "id_rsa", "id_ed25519",
-    "BEGIN RSA", "BEGIN OPENSSH",
-    "sudo ", "rm -rf", "curl", "| sh",
+    "password",
+    "passwd",
+    "secret",
+    "api_key",
+    "apikey",
+    "api-key",
+    "token",
+    "credential",
+    "ssh-",
+    "id_rsa",
+    "id_ed25519",
+    "BEGIN RSA",
+    "BEGIN OPENSSH",
+    "sudo ",
+    "rm -rf",
+    "curl",
+    "| sh",
 ];
 
 fn edits_path() -> PathBuf {
@@ -66,7 +77,10 @@ fn load_state() -> io::Result<EditsState> {
         return Ok(EditsState::default());
     }
     serde_json::from_str(&content).map_err(|e| {
-        io::Error::new(io::ErrorKind::InvalidData, format!("corrupt edits file: {e}"))
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("corrupt edits file: {e}"),
+        )
     })
 }
 
@@ -76,7 +90,10 @@ fn save_state(state: &EditsState) -> io::Result<()> {
         fs::create_dir_all(parent)?;
     }
     let json = serde_json::to_string_pretty(state).map_err(|e| {
-        io::Error::new(io::ErrorKind::InvalidData, format!("serialization failed: {e}"))
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("serialization failed: {e}"),
+        )
     })?;
     fs::write(&path, json)
 }
@@ -91,7 +108,9 @@ pub struct MemoryUserEditsTool;
 
 #[async_trait]
 impl ToolSpec for MemoryUserEditsTool {
-    fn name(&self) -> &'static str { "memory_user_edits" }
+    fn name(&self) -> &'static str {
+        "memory_user_edits"
+    }
 
     fn description(&self) -> &'static str {
         "Manage explicit user memory overrides. Use when the user tells you \
@@ -154,62 +173,95 @@ fn cmd_view() -> Result<ToolResult, ToolError> {
     }
     let mut lines = vec![format!("Memory edits: {} entries\n", state.edits.len())];
     for e in &state.edits {
-        lines.push(format!("[{}] {} — {}", e.line, truncate(&e.content, 200), e.timestamp));
+        lines.push(format!(
+            "[{}] {} — {}",
+            e.line,
+            truncate(&e.content, 200),
+            e.timestamp
+        ));
     }
     Ok(ToolResult::success(lines.join("\n")))
 }
 
 fn cmd_add(content: &str) -> Result<ToolResult, ToolError> {
     let text = content.trim();
-    if text.is_empty() { return Err(ToolError::invalid_input("empty entry")); }
+    if text.is_empty() {
+        return Err(ToolError::invalid_input("empty entry"));
+    }
     if text.len() > MAX_CHARS_PER_EDIT {
         return Err(ToolError::invalid_input(format!(
-            "too long: {} chars (max {})", text.len(), MAX_CHARS_PER_EDIT
+            "too long: {} chars (max {})",
+            text.len(),
+            MAX_CHARS_PER_EDIT
         )));
     }
     if is_blocked(text) {
         return Err(ToolError::permission_denied(
-            "entry contains blocked content (secrets or destructive commands)"
+            "entry contains blocked content (secrets or destructive commands)",
         ));
     }
     let mut state = load_state().map_err(|e| ToolError::execution_failed(e.to_string()))?;
     if state.edits.len() >= MAX_EDITS {
         return Err(ToolError::invalid_input(format!(
-            "full: {} max. Use remove to free a slot.", MAX_EDITS
+            "full: {} max. Use remove to free a slot.",
+            MAX_EDITS
         )));
     }
     let next = state.edits.last().map(|e| e.line + 1).unwrap_or(1);
     let ts = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
-    state.edits.push(MemoryEdit { line: next, content: text.to_string(), timestamp: ts });
+    state.edits.push(MemoryEdit {
+        line: next,
+        content: text.to_string(),
+        timestamp: ts,
+    });
     save_state(&state).map_err(|e| ToolError::execution_failed(e.to_string()))?;
     // Mirror to Obsidian vault if it exists
-    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    let vault_root = dirs::home_dir()
+        .unwrap_or_default()
+        .join(".deepseek")
+        .join("vault");
     if vault_root.join("MetisOS").exists() {
         let _ = super::obsidian_vault::write_edit(&vault_root, next, text);
     }
-    Ok(ToolResult::success(format!("Added memory #{}: {}", next, truncate(text, 120))))
+    Ok(ToolResult::success(format!(
+        "Added memory #{}: {}",
+        next,
+        truncate(text, 120)
+    )))
 }
 
 fn cmd_replace(line: usize, content: &str) -> Result<ToolResult, ToolError> {
     let text = content.trim();
-    if text.is_empty() { return Err(ToolError::invalid_input("empty replacement")); }
+    if text.is_empty() {
+        return Err(ToolError::invalid_input("empty replacement"));
+    }
     if text.len() > MAX_CHARS_PER_EDIT {
         return Err(ToolError::invalid_input(format!(
-            "too long: {} chars (max {})", text.len(), MAX_CHARS_PER_EDIT
+            "too long: {} chars (max {})",
+            text.len(),
+            MAX_CHARS_PER_EDIT
         )));
     }
     if is_blocked(text) {
-        return Err(ToolError::permission_denied("replacement contains blocked content"));
+        return Err(ToolError::permission_denied(
+            "replacement contains blocked content",
+        ));
     }
     let mut state = load_state().map_err(|e| ToolError::execution_failed(e.to_string()))?;
-    let idx = state.edits.iter().position(|e| e.line == line)
+    let idx = state
+        .edits
+        .iter()
+        .position(|e| e.line == line)
         .ok_or_else(|| ToolError::invalid_input(format!("no entry at line {line}")))?;
     let old = state.edits[idx].content.clone();
     state.edits[idx].content = text.to_string();
     state.edits[idx].timestamp = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     save_state(&state).map_err(|e| ToolError::execution_failed(e.to_string()))?;
     // Mirror to Obsidian vault if it exists
-    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    let vault_root = dirs::home_dir()
+        .unwrap_or_default()
+        .join(".deepseek")
+        .join("vault");
     if vault_root.join("MetisOS").exists() {
         let _ = super::obsidian_vault::write_edit(&vault_root, line, text);
     }
@@ -222,7 +274,10 @@ fn cmd_replace(line: usize, content: &str) -> Result<ToolResult, ToolError> {
 
 fn cmd_remove(line: usize) -> Result<ToolResult, ToolError> {
     let mut state = load_state().map_err(|e| ToolError::execution_failed(e.to_string()))?;
-    let idx = state.edits.iter().position(|e| e.line == line)
+    let idx = state
+        .edits
+        .iter()
+        .position(|e| e.line == line)
         .ok_or_else(|| ToolError::invalid_input(format!("no entry at line {line}")))?;
     let removed = state.edits.remove(idx);
     save_state(&state).map_err(|e| ToolError::execution_failed(e.to_string()))?;
@@ -234,7 +289,11 @@ fn cmd_remove(line: usize) -> Result<ToolResult, ToolError> {
 }
 
 fn truncate(text: &str, max: usize) -> String {
-    if text.len() <= max { text.to_string() } else { format!("{}…", &text[..max]) }
+    if text.len() <= max {
+        text.to_string()
+    } else {
+        format!("{}…", &text[..max])
+    }
 }
 
 #[cfg(test)]

@@ -1136,10 +1136,7 @@ mod tests {
         let props = props_with_status("working");
         let line = render_at_width(props, 120);
         assert!(line.contains("agent"), "mode visible: {line:?}");
-        assert!(
-            line.contains("MetisOS"),
-            "model visible: {line:?}"
-        );
+        assert!(line.contains("MetisOS"), "model visible: {line:?}");
         assert!(line.contains("working"), "status visible: {line:?}");
         assert!(!line.contains("..."), "no truncation expected: {line:?}");
     }
@@ -1174,10 +1171,7 @@ mod tests {
         // the status label drops, keeping mode + model verbatim.
         let line = render_at_width(props, 30);
         assert!(line.contains("agent"), "mode kept: {line:?}");
-        assert!(
-            line.contains("MetisOS"),
-            "model kept verbatim: {line:?}"
-        );
+        assert!(line.contains("MetisOS"), "model kept verbatim: {line:?}");
         assert!(
             !line.contains("refreshing"),
             "status dropped before model truncated: {line:?}",

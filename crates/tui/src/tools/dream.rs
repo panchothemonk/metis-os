@@ -8,8 +8,7 @@ use async_trait::async_trait;
 use serde_json::{Value, json};
 
 use super::spec::{
-    ApprovalRequirement, ToolCapability, ToolContext, ToolError, ToolResult, ToolSpec,
-    required_str,
+    ApprovalRequirement, ToolCapability, ToolContext, ToolError, ToolResult, ToolSpec, required_str,
 };
 
 /// Tool that lets the model trigger the dreaming pipeline.
@@ -17,7 +16,9 @@ pub struct DreamTool;
 
 #[async_trait]
 impl ToolSpec for DreamTool {
-    fn name(&self) -> &'static str { "dream" }
+    fn name(&self) -> &'static str {
+        "dream"
+    }
 
     fn description(&self) -> &'static str {
         "Trigger the MetisOS dreaming extraction pipeline over past sessions. \
@@ -123,9 +124,8 @@ fn dream_status() -> Result<ToolResult, ToolError> {
 
 fn dream_run() -> Result<ToolResult, ToolError> {
     // Ensure memory directory exists
-    std::fs::create_dir_all(memory_dir()).map_err(|e| {
-        ToolError::execution_failed(format!("cannot create memory dir: {e}"))
-    })?;
+    std::fs::create_dir_all(memory_dir())
+        .map_err(|e| ToolError::execution_failed(format!("cannot create memory dir: {e}")))?;
 
     // Check if sessions exist
     let session_count = if sessions_dir().exists() {
@@ -145,7 +145,10 @@ fn dream_run() -> Result<ToolResult, ToolError> {
     }
 
     // Bootstrap the Obsidian vault if configured
-    let vault_root = dirs::home_dir().unwrap_or_default().join(".deepseek").join("vault");
+    let vault_root = dirs::home_dir()
+        .unwrap_or_default()
+        .join(".deepseek")
+        .join("vault");
     if vault_root.exists() {
         let _ = super::obsidian_vault::bootstrap_vault(&vault_root);
     }
@@ -174,7 +177,10 @@ mod tests {
     async fn dream_status_returns_info() {
         let tool = DreamTool;
         let result = tool
-            .execute(json!({"action": "status"}), &ToolContext::new(std::path::PathBuf::from(".")))
+            .execute(
+                json!({"action": "status"}),
+                &ToolContext::new(std::path::PathBuf::from(".")),
+            )
             .await
             .expect("status should work");
         assert!(result.content.contains("Memory Status"));
@@ -184,7 +190,10 @@ mod tests {
     async fn dream_run_without_sessions_reports_zero() {
         let tool = DreamTool;
         let result = tool
-            .execute(json!({"action": "run"}), &ToolContext::new(std::path::PathBuf::from(".")))
+            .execute(
+                json!({"action": "run"}),
+                &ToolContext::new(std::path::PathBuf::from(".")),
+            )
             .await
             .expect("run should work");
         // The sessions dir may or may not exist in test; either 0 sessions or "no transcripts"
@@ -198,7 +207,10 @@ mod tests {
     async fn dream_rejects_unknown_action() {
         let tool = DreamTool;
         let err = tool
-            .execute(json!({"action": "wat"}), &ToolContext::new(std::path::PathBuf::from(".")))
+            .execute(
+                json!({"action": "wat"}),
+                &ToolContext::new(std::path::PathBuf::from(".")),
+            )
             .await
             .unwrap_err();
         assert!(err.to_string().contains("unknown action"));

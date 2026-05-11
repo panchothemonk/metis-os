@@ -112,13 +112,8 @@ pub fn dream(_app: &mut App, arg: Option<&str>) -> CommandResult {
             match fs::read_to_string(auto_path()) {
                 Ok(content) if !content.trim().is_empty() => {
                     if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
-                        let count = parsed["facts"]
-                            .as_array()
-                            .map(|a| a.len())
-                            .unwrap_or(0);
-                        let last = parsed["last_extraction"]
-                            .as_str()
-                            .unwrap_or("never");
+                        let count = parsed["facts"].as_array().map(|a| a.len()).unwrap_or(0);
+                        let last = parsed["last_extraction"].as_str().unwrap_or("never");
                         lines.push(format!(
                             "Auto-memory (auto.json): {} facts | last extraction: {}",
                             count, last
@@ -135,10 +130,7 @@ pub fn dream(_app: &mut App, arg: Option<&str>) -> CommandResult {
             match fs::read_to_string(edits_path()) {
                 Ok(content) if !content.trim().is_empty() => {
                     if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
-                        let count = parsed["edits"]
-                            .as_array()
-                            .map(|a| a.len())
-                            .unwrap_or(0);
+                        let count = parsed["edits"].as_array().map(|a| a.len()).unwrap_or(0);
                         lines.push(format!(
                             "User edits (edits.json): {} manual overrides",
                             count
@@ -198,10 +190,7 @@ mod tests {
     fn dream_run_enqueues_task() {
         let mut app = app();
         let result = dream(&mut app, None);
-        assert!(matches!(
-            result.action,
-            Some(AppAction::TaskAdd { .. })
-        ));
+        assert!(matches!(result.action, Some(AppAction::TaskAdd { .. })));
     }
 
     #[test]

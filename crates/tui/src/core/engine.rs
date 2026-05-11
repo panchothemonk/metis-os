@@ -1259,15 +1259,20 @@ impl Engine {
     /// for fact extraction, and writes the structured output to `~/.deepseek/memory/auto.json`.
     /// Runs in a background task so the engine isn't blocked.
     async fn spawn_auto_dream(&mut self) {
-        let _ = self.tx_event.send(Event::status(
-            "🧠 Auto-dreaming: extracting memories from past sessions..."
-                .to_string(),
-        )).await;
+        let _ = self
+            .tx_event
+            .send(Event::status(
+                "🧠 Auto-dreaming: extracting memories from past sessions...".to_string(),
+            ))
+            .await;
 
         let Some(client) = self.deepseek_client.clone() else {
-            let _ = self.tx_event.send(Event::status(
-                "🧠 Auto-dreaming: skipped (API client not configured)".to_string(),
-            )).await;
+            let _ = self
+                .tx_event
+                .send(Event::status(
+                    "🧠 Auto-dreaming: skipped (API client not configured)".to_string(),
+                ))
+                .await;
             return;
         };
 
@@ -1290,17 +1295,12 @@ impl Engine {
             let mut session_entries: Vec<_> = match std::fs::read_dir(&sessions_dir) {
                 Ok(entries) => entries
                     .filter_map(|e| e.ok())
-                    .filter(|e| {
-                        e.path()
-                            .extension()
-                            .is_some_and(|ext| ext == "json")
-                    })
+                    .filter(|e| e.path().extension().is_some_and(|ext| ext == "json"))
                     .collect(),
                 Err(_) => {
                     let _ = tx
                         .send(Event::status(
-                            "🧠 Auto-dreaming: no sessions directory found"
-                                .to_string(),
+                            "🧠 Auto-dreaming: no sessions directory found".to_string(),
                         ))
                         .await;
                     return;
@@ -1330,9 +1330,7 @@ impl Engine {
             for entry in &session_entries {
                 if let Ok(content) = std::fs::read_to_string(entry.path()) {
                     let name = entry.file_name().to_string_lossy().into_owned();
-                    transcripts.push_str(&format!(
-                        "=== Session: {name} ===\n"
-                    ));
+                    transcripts.push_str(&format!("=== Session: {name} ===\n"));
                     let truncated: String = content.chars().take(8000).collect();
                     transcripts.push_str(&truncated);
                     transcripts.push_str("\n\n");
@@ -1379,8 +1377,7 @@ impl Engine {
                 messages,
                 max_tokens: 4096,
                 system: Some(SystemPrompt::Text(
-                    "You are a memory extraction system. Output only valid JSON."
-                        .to_string(),
+                    "You are a memory extraction system. Output only valid JSON.".to_string(),
                 )),
                 tools: None,
                 tool_choice: None,
@@ -1418,20 +1415,18 @@ impl Engine {
 
                     // Validate the model output is JSON; wrap in a structured
                     // envelope if the model didn't produce clean JSON.
-                    let output =
-                        if serde_json::from_str::<serde_json::Value>(&text).is_ok()
-                        {
-                            text
-                        } else {
-                            let timestamp = chrono::Utc::now().to_rfc3339();
-                            serde_json::json!({
-                                "version": 1,
-                                "last_extraction": timestamp,
-                                "facts": [],
-                                "raw_response": text,
-                            })
-                            .to_string()
-                        };
+                    let output = if serde_json::from_str::<serde_json::Value>(&text).is_ok() {
+                        text
+                    } else {
+                        let timestamp = chrono::Utc::now().to_rfc3339();
+                        serde_json::json!({
+                            "version": 1,
+                            "last_extraction": timestamp,
+                            "facts": [],
+                            "raw_response": text,
+                        })
+                        .to_string()
+                    };
 
                     if let Err(e) = std::fs::write(&auto_path, &output) {
                         let _ = tx
@@ -1442,14 +1437,10 @@ impl Engine {
                         return;
                     }
 
-                    let fact_count = serde_json::from_str::<serde_json::Value>(
-                        &output,
-                    )
-                    .ok()
-                    .and_then(|v| {
-                        v["facts"].as_array().map(|a| a.len())
-                    })
-                    .unwrap_or(0);
+                    let fact_count = serde_json::from_str::<serde_json::Value>(&output)
+                        .ok()
+                        .and_then(|v| v["facts"].as_array().map(|a| a.len()))
+                        .unwrap_or(0);
 
                     let _ = tx
                         .send(Event::status(format!(
@@ -1475,7 +1466,7 @@ impl Engine {
     /// only sees metadata about the REPL state, never the prompt text
     /// directly. The model generates Python code, which is executed by
     /// the REPL. When FINAL() is called, the loop ends.
-async fn handle_rlm(
+    async fn handle_rlm(
         &mut self,
         content: String,
         model: String,
