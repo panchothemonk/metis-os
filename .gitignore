@@ -6,3 +6,7 @@ node_modules/
 *.swp
 *.swo
 !.env.example
+
+# MetisOS runtime artifacts
+crates/tui/.deepseek/
+crates/tui/session_*.json
