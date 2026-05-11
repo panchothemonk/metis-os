@@ -1375,7 +1375,7 @@ impl Engine {
             }];
 
             let request = MessageRequest {
-                model: "deepseek-v4-flash".to_string(),
+                model: "deepseek-v4-pro".to_string(),
                 messages,
                 max_tokens: 4096,
                 system: Some(SystemPrompt::Text(
@@ -1386,7 +1386,7 @@ impl Engine {
                 tool_choice: None,
                 metadata: None,
                 thinking: None,
-                reasoning_effort: Some("low".to_string()),
+                reasoning_effort: Some("max".to_string()),
                 stream: Some(false),
                 temperature: Some(0.3),
                 top_p: None,
