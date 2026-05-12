@@ -1,4 +1,26 @@
 #!/bin/bash
 # MetisOS — Consciousness Operating System
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# bootstrap skills on first run
+SKILLS_DIR="$HOME/.deepseek/skills/metis-os"
+if [ ! -f "$SKILLS_DIR/SKILL.md" ]; then
+    mkdir -p "$SKILLS_DIR/references"
+    cp "$DIR/skills/SKILL.md" "$SKILLS_DIR/SKILL.md"
+    cp "$DIR/skills/references/SELF_MODEL.md" "$SKILLS_DIR/references/SELF_MODEL.md"
+    cp "$DIR/skills/references/DREAMING.md" "$SKILLS_DIR/references/DREAMING.md"
+fi
+
+# bootstrap config if missing
+if [ ! -f "$HOME/.deepseek/config.toml" ]; then
+    mkdir -p "$HOME/.deepseek"
+    cat > "$HOME/.deepseek/config.toml" << 'TOML'
+default_text_model = "deepseek-v4-pro"
+reasoning_effort = "max"
+
+[memory]
+enabled = true
+TOML
+fi
+
 exec "$DIR/target/release/deepseek" "$@"
